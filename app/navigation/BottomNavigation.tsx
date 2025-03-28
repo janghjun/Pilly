@@ -2,6 +2,11 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Image } from 'react-native';
 import HomeScreen from '../screens/Main/HomeScreen';
+import DietScreen from '../screens/DietScreen'; // 식단 화면 추가
+import MedicineScreen from '../screens/MedicineScreen'; // 복약 화면 추가
+import ExerciseScreen from '../screens/ExerciseScreen'; // 운동 화면 추가
+import SleepScreen from '../screens/SleepScreen'; // 수면 화면 추가
+
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +29,7 @@ function BottomNavigation() {
             {/* 각 Tab.Screen을 Navigator에 자식으로 추가 */}
             <Tab.Screen
                 name="식단"
-                component={() => null}
+                component={DietScreen}
                 options={{
                     tabBarIcon: ({focused}) =>(
                         <View style={{alignItems: 'center'}}>
@@ -38,7 +43,7 @@ function BottomNavigation() {
             />
             <Tab.Screen
                 name="복약"
-                component={() => null}
+                component={MedicineScreen}
                 options={{
                     tabBarIcon: () => (
                         <View style={{alignItems: 'center'}}>
@@ -66,7 +71,7 @@ function BottomNavigation() {
             />
             <Tab.Screen
                 name="운동"
-                component={() => null}
+                component={ExerciseScreen}
                 options={{
                     tabBarIcon: () => (
                         <View style={{alignItems: 'center'}}>
@@ -80,7 +85,7 @@ function BottomNavigation() {
             />
             <Tab.Screen
                 name="수면"
-                component={() => null}
+                component={SleepScreen}
                 options={{
                     tabBarIcon: () => (
                         <View style={{alignItems: 'center'}}>
