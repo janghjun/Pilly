@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useUserInfo } from '../../context/UserInfoContext';
 
 export default function SignupStep2({ navigation }) {
+  const { userInfo, setUserInfo } = useUserInfo();
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
   const [gender, setGender] = useState('');
 
+  useEffect(() => {
+    // 기존 정보가 있다면 미리 채우기
+    setName(userInfo.nickname || '');
+    setBirth(userInfo.birth || '');
+    setGender(userInfo.gender || '');
+  }, [userInfo]);
+
   const handleNext = () => {
-    if (!name || !birth || !gender) return;
+    setUserInfo((prev) => ({
+      ...prev,
+      nickname: name,
+      birth,
+      gender,
+    }));
     navigation.navigate('Signup3');
   };
 

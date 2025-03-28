@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useUserInfo } from '../../context/UserInfoContext';
 
 export default function SignupStep1({ navigation }) {
+  const { setUserInfo } = useUserInfo();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleNext = () => {
-    if (email && password) {
-      navigation.navigate('Signup2');
+    if (!email || !password) {
+      alert('이메일과 비밀번호를 입력해주세요');
+      return;
     }
+
+    setUserInfo((prev) => ({ ...prev, email })); // UserInfoContext에 email 저장
+    navigation.navigate('Signup2');
   };
 
   return (
