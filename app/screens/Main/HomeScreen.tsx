@@ -1,96 +1,114 @@
-import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Switch, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useUserInfo } from '../../context/UserInfoContext';
+
+// 복약 관리 및 알람 상태를 관리하기 위한 데이터 예시
+const initialMedicationData = [
+  { id: 1, name: '유산균', quantity: 2, taken: false },
+  { id: 2, name: '마그네슘', quantity: 1, taken: false },
+];
+
+const initialAlarmData = [
+  { id: 1, time: '07:00', enabled: true },
+  { id: 2, time: '08:00', enabled: false },
+];
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
+  const { userInfo } = useUserInfo();
+  const [medications, setMedications] = useState(initialMedicationData);
+  const [alarms, setAlarms] = useState(initialAlarmData);
+
+  const handleMedicationCheck = (id: number) => {
+    setMedications(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, taken: !item.taken } : item
+      )
+    );
+  };
+
+  const handleAlarmToggle = (id: number) => {
+    setAlarms(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, enabled: !item.enabled } : item
+      )
+    );
+  };
+
+  const handleDoubleClick = (target: string) => {
+    navigation.navigate(target);
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* 퀵메뉴 */}
-      <View style={styles.quickMenu}>
-        <Text style={styles.quickMenuText}>퀵 메뉴</Text>
-      </View>
-
-      {/* 한눈에 확인하기 타이틀 */}
-      <Text style={styles.sectionTitle}>한눈에 확인하기</Text>
-      <Text style={styles.date}>03/21 (금)</Text>
-
-      {/* 식단 카드 */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>🍽 오전 10:00</Text>
-        <View style={styles.foodItem}>
-          <Text>햇반 210g</Text>
-          <Text>315 kcal</Text>
-        </View>
-        <View style={styles.foodItem}>
-          <Text>닭가슴살 200g</Text>
-          <Text>230 kcal</Text>
-        </View>
-      </View>
-
-      {/* 복약 카드 */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>💊 복약</Text>
-        <Text>유산균 ✅</Text>
-        <Text>마그네슘 ✅</Text>
-      </View>
-
-      {/* 운동 카드 */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>💪 운동 부위</Text>
-        <Text>가슴, 등 / 698kcal / 8개 운동</Text>
-        <TouchableOpacity style={styles.detailButton}>
-          <Text style={styles.detailButtonText}>자세히 보기</Text>
+    <View style={styles.container}>
+      {/* 상단 로고 및 사용자 설정 버튼 */}
+      <View style={styles.header}>
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+        <TouchableOpacity onPress={() => navigation.navigate('UserSettings')}>
+          <Image
+              source={require('../../assets/images/profile.png')}
+              style={styles.profile}
+          />
         </TouchableOpacity>
       </View>
 
-      {/* 알람 카드 */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>⏰ 기본 알람</Text>
-        <View style={styles.alarmRow}>
-          <Text>07:00</Text>
-          <Switch value={true} />
-        </View>
-        <View style={styles.alarmRow}>
-          <Text>07:00</Text>
-          <Switch value={true} />
-        </View>
+      {/* 홈 화면 콘텐츠 */}
+      <View style={styles.section}>
+        <TouchableOpacity onPress={() => handleDoubleClick('식단')}>
+          <Text style={styles.sectionTitle}>식단</Text>
+          <Text>오늘의 식단: 햇반 210g, 닭가슴살 200g</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+
+      <View style={styles.section}>
+        <TouchableOpacity onPress={() => handleDoubleClick('복약')}>
+          <Text style={styles.sectionTitle}>복약</Text>
+          {medications.map((medication) => (
+            <View key={medication.id} style={styles.medicationItem}>
+              <Text>{medication.name} {medication.quantity}개</Text>
+              <Switch
+                value={medication.taken}
+                onValueChange={() => handleMedicationCheck(medication.id)}
+              />
+            </View>
+          ))}
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <TouchableOpacity onPress={() => handleDoubleClick('운동')}>
+          <Text style={styles.sectionTitle}>운동</Text>
+          <Text>오늘의 운동: 8개 운동, 32세트, 698kcal</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <TouchableOpacity onPress={() => handleDoubleClick('수면')}>
+          <Text style={styles.sectionTitle}>알람</Text>
+          {alarms.map((alarm) => (
+            <View key={alarm.id} style={styles.alarmItem}>
+              <Text>{alarm.time}</Text>
+              <Switch
+                value={alarm.enabled}
+                onValueChange={() => handleAlarmToggle(alarm.id)}
+              />
+            </View>
+          ))}
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  quickMenu: {
-    backgroundColor: '#f2f2f2',
-    height: 60,
-    borderRadius: 10,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 20,
-  },
-  quickMenuText: { fontSize: 16, color: '#888' },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold' },
-  date: { marginBottom: 12, color: '#666' },
-  card: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    elevation: 1, // Android shadow
-    shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, // iOS shadow
-  },
-  cardTitle: { fontWeight: 'bold', marginBottom: 8 },
-  foodItem: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  alarmRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
-  detailButton: {
-    marginTop: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#ddd',
-    alignItems: 'center',
-  },
-  detailButtonText: { fontWeight: 'bold', color: '#444' },
+  container: { flex: 1, padding: 20, backgroundColor: '#f8f8f8' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  logo: { width: 40, height: 40, resizeMode: "contain"},
+  profile: {width: 26, height: 26},
+  settingsButton: { fontSize: 16, color: '#000', textDecorationLine: 'underline' },
+  section: { marginVertical: 10, backgroundColor: '#fff', padding: 15, borderRadius: 8, marginBottom: 10 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+  medicationItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  alarmItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 });
