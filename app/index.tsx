@@ -16,6 +16,8 @@ import Step2Profile from './screens/Onboarding/Step2Profile';
 import Step3ServiceSelect from './screens/Onboarding/Step3ServiceSelect';
 import BottomNavigation from './navigation/BottomNavigation';
 import HomeScreen from './screens/Main/HomeScreen';
+import FoodDetail from './screens/DietScreen/FoodDetail';
+import DietScreen from './screens/DietScreen/DietScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +40,9 @@ function App() {
 
           {/* Main App */}
           <Stack.Screen name="Main" component={BottomNavigation} />
+
+          <Stack.Screen name="Diet" component={DietScreen} />
+          <Stack.Screen name="FoodDetail" component={FoodDetail} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserInfoProvider>
