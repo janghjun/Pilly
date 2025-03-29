@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Image } from 'react-native';
 import HomeScreen from '../screens/Main/HomeScreen';
-import DietScreen from '../screens/DietScreen'; // 식단 화면 추가
+import DietScreen from '../screens/DietScreen/DietScreen'; // 식단 화면 추가
 import MedicineScreen from '../screens/MedicineScreen'; // 복약 화면 추가
 import ExerciseScreen from '../screens/ExerciseScreen'; // 운동 화면 추가
 import SleepScreen from '../screens/SleepScreen'; // 수면 화면 추가
