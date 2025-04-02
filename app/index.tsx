@@ -14,9 +14,8 @@ import SignupStep3 from './screens/Auth/SignupStep3';
 
 import PasswordResetScreen from './screens/Auth/PasswordResetScreen';
 
-import Step1Nickname from './screens/Onboarding/Step1Nickname';
-import Step2Profile from './screens/Onboarding/Step2Profile';
-import Step3ServiceSelect from './screens/Onboarding/Step3ServiceSelect';
+import OnboardingScreen from './screens/Onboarding/OnboardingScreen';
+
 import BottomNavigation from './navigation/BottomNavigation';
 import HomeScreen from './screens/Main/HomeScreen';
 import FoodDetail from './screens/DietScreen/FoodDetail';
@@ -39,13 +38,11 @@ function App() {
           <Stack.Screen name="LoginHome" component={LoginHome} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup1" component={SignupStep1} />
-          <Stack.Screen name="Signup2" component={SignupStep2} />
-          <Stack.Screen name="Signup3" component={SignupStep3} />
-          <Stack.Screen name="PasswordResetScreen" component={PasswordResetScreen} />
+
           {/* Onboarding */}
-          <Stack.Screen name="Step1" component={Step1Nickname} />
-          <Stack.Screen name="Step2" component={Step2Profile} />
-          <Stack.Screen name="Step3" component={Step3ServiceSelect} />
+          <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+
+          <Stack.Screen name="PasswordResetScreen" component={PasswordResetScreen} />
 
           {/* Main App */}
           <Stack.Screen name="Main" component={BottomNavigation} />
