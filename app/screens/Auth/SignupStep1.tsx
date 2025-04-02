@@ -22,7 +22,6 @@ export default function SignupStep1({ navigation }) {
       }
       setUserInfo(prev => ({ ...prev, email, password }));
       navigation.navigate('OnboardingScreen');
-
     }
   };
 
@@ -30,101 +29,110 @@ export default function SignupStep1({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.stepIndicatorContainer}>
-        <Text style={styles.stepIndicator}>{step}/2</Text>
-      </View>
+      <Text style={styles.stepIndicator}>{step}/2</Text>
+      <Text style={styles.welcomeText}>환영합니다{'\n'}빠른 가입으로 시작해봐요</Text>
 
-      <View>
-        <Text style={styles.welcomeText}>환영합니다</Text>
-        <Text style={styles.fastSignupText}>빠른 가입으로 시작해봐요</Text>
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="사용자 이메일을 입력해주세요"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        placeholderTextColor="#aaa"
+      />
 
-      <View style={styles.formContainer}>
+      {step === 2 && (
         <TextInput
-          style={styles.input}
-          placeholder="사용자 이메일을 입력해주세요"
-          value={email}
-          onChangeText={setEmail}
+          style={[styles.input, styles.passwordInput]}
+          placeholder="사용하실 비밀번호 6자 이상 입력해주세요"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholderTextColor="#aaa"
         />
+      )}
 
-        {step === 2 && (
-          <TextInput
-            style={styles.input}
-            placeholder="사용하실 비밀번호 6자 이상 입력해주세요"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-        )}
-      </View>
+      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <Text style={styles.buttonText}>다 음</Text>
+      </TouchableOpacity>
 
-      <View style={{ gap: 12 }}>
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-          <Text style={styles.buttonText}>다 음</Text>
+      {step === 2 && (
+        <TouchableOpacity style={styles.prevButton} onPress={handleBack}>
+          <Text style={styles.buttonText}>이 전</Text>
         </TouchableOpacity>
-
-        {step === 2 && (
-          <TouchableOpacity style={styles.prevButton} onPress={handleBack}>
-            <Text style={styles.buttonText}>이 전</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'space-between',
-    backgroundColor: '#F1F5F9',
-  },
-  stepIndicatorContainer: {
-    alignItems: 'flex-end',
+    width: 393,
+    height: 852,
+    backgroundColor: '#F0F3F6',
+    position: 'relative',
+    alignItems: 'center',
   },
   stepIndicator: {
-    color: '#93C5FD',
+    position: 'absolute',
+    top: 70,
+    right: 30,
+    fontSize: 20,
+    color: '#6199F7',
     fontWeight: '600',
-    fontSize: 16,
   },
   welcomeText: {
+    position: 'absolute',
+    top: 135,
+    left: 21,
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  fastSignupText: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 24,
-  },
-  formContainer: {
-    alignItems: 'center',
+    color: '#000000',
   },
   input: {
+    position: 'absolute',
+    top: 346,
+    left: 51,
+    width: 292,
+    height: 55,
     backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 12,
-    width: '100%',
-    marginBottom: 16,
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#94A3B8',
+    borderRadius:8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    elevation: 2,
+    textAlign: 'left',
+  },
+  passwordInput: {
+    top: 451, // step === 2 일 때 비밀번호 입력창 위치
   },
   nextButton: {
-    backgroundColor: '#2563EB',
-    padding: 16,
-    borderRadius: 8,
+    position: 'absolute',
+    bottom: 100,
+    left: 24,
+    width: 348,
+    height: 48,
+    backgroundColor: '#2678E4',
+    borderRadius: 5,
+    justifyContent: 'center',
     alignItems: 'center',
+    elevation: 2,
   },
   prevButton: {
+    position: 'absolute',
+    bottom: 32,
+    left: 24,
+    width: 348,
+    height: 48,
     backgroundColor: '#F87171',
-    padding: 16,
-    borderRadius: 8,
+    borderRadius: 5,
+    justifyContent: 'center',
     alignItems: 'center',
+    elevation: 2,
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 18,
+    letterSpacing: 8,
   },
 });
