@@ -30,7 +30,7 @@ export default function LoginHome({ navigation }: any) {
     <View style={styles.container}>
       {/* 제목 */}
       <Text style={styles.title}>
-        <Text style={styles.span}>건강 걱정 끝, </Text>
+        <Text style={styles.span}>건강 걱정 끝, {'\n'}</Text>
         <Text style={styles.orange}>바디</Text>
         <Text style={styles.blue}>케어</Text>
         <Text style={styles.span}>에 오신 것을{'\n'}환영합니다!</Text>
@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
     width: 393,
     backgroundColor: '#F0F3F6',
     position: 'relative',
+    fontFamily: 'Roboto-SemiBold',
+
   },
   title: {
     position: 'absolute',
@@ -85,7 +87,6 @@ const styles = StyleSheet.create({
     width: 311,
     fontSize: 32,
     fontWeight: '600',
-    fontFamily: 'Roboto-SemiBold',
     lineHeight: 40,
     letterSpacing: -0.5,
     color: '#151515',

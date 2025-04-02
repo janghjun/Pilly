@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Roboto-SemiBold',
     lineHeight: 40,
-    color: '#F05636B2',
+    color: '#F05636',
   },
   inputGroup: {
     position: 'absolute',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 16,
-    color: '#151515',
+    color: '#AAAAAA',
   },
   loginButton: {
     position: 'absolute',
@@ -200,8 +200,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
+    letterSpacing: 8,
   },
   socialText: {
     //position: 'absolute',
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
   },
   socialRow: {
     position: 'absolute',
-    top: 685,
+    top: 680,
     flexDirection: 'row',
     //gap: 20,
   },
