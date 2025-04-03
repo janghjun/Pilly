@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }: any) {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      navigation.navigate('Step1');
+      navigation.navigate('Main');
     }, 2000);
   };
 
