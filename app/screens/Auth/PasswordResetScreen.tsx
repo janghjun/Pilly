@@ -15,7 +15,6 @@ export default function PasswordResetScreen({ navigation }) {
       return;
     }
 
-    // 실제 이메일 발송 처리 (임시 예시)
     setTimeout(() => {
       Alert.alert('비밀번호 재설정 이메일을 보냈습니다.');
       navigation.navigate('Login');
@@ -46,51 +45,67 @@ export default function PasswordResetScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'center',
+    width: 393,
+    height: 852,
     backgroundColor: '#F1F4F9',
+    position: 'relative',
+    alignItems: 'center',
   },
   step: {
     position: 'absolute',
-    top: 50,
+    top: 70,
     right: 30,
-    fontSize: 16,
+    fontSize: 20,
     color: '#6199F7',
     fontWeight: '600',
   },
   title: {
-    fontSize: 22,
+    position: 'absolute',
+    top: 135,
+    left: 21,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#121212',
+    color: '#000000',
   },
   subtitle: {
+    position: 'absolute',
+    top: 180,
+    left: 21,
     fontSize: 16,
-    color: '#F57C73',
-    marginBottom: 40,
-    lineHeight: 24,
+    color: '#F05636',
+    lineHeight: 20,
   },
   input: {
+    position: 'absolute',
+    top: 399,
+    left: 51,
+    width: 292,
+    height: 55,
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+    borderRadius:8,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 24,
-    fontSize: 15,
+    fontSize: 16,
     elevation: 2,
-    textAlign: 'center',
+    textAlign: 'left',
+    fontWeight: 'bold',
+
   },
   button: {
-    backgroundColor: '#2F80ED',
-    borderRadius: 10,
-    paddingVertical: 16,
+    position: 'absolute',
+    top: 769,
+    left: 22,
+    width: 348,
+    height: 48,
+    backgroundColor: '#2678E4',
+    borderRadius: 5,
+    justifyContent: 'center',
     alignItems: 'center',
     elevation: 2,
   },
   buttonText: {
     color: '#FFF',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
+    letterSpacing: 6,
   },
 });
