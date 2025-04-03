@@ -15,6 +15,7 @@ function BottomNavigation() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: '#F0F3F6',
           width: 390,
