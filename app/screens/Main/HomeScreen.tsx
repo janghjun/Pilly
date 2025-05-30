@@ -1,211 +1,359 @@
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, SafeAreaView } from 'react-native';
-import WeeklyCalendar from '../../components/common/Calendar/WeeklyCalendar';
-import MonthlyCalendar from '../../components/common/Calendar/MonthlyCalendar';
-import { addMonths, subMonths, isToday } from 'date-fns';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useDiet } from '../../context/DietContext';
-import { useMedication } from '../../context/MedicationContext';
-import { useExercise } from '../../context/ExerciseContext';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function HomeScreen() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [isMonthView, setIsMonthView] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const navigation = useNavigation();
 
-  const { getSummaryByDate: getDietSummary, hasRecordOnDate: hasDiet } = useDiet();
-  const { getSummaryByDate: getMedicationSummary, hasRecordOnDate: hasMedication } = useMedication();
-  const { getSummaryByDate: getExerciseSummary, hasRecordOnDate: hasExercise } = useExercise();
+  // 더블탭 감지 유틸
+  const useDoublePress = (onDoublePress: () => void, delay = 300) => {
+    const [lastPress, setLastPress] = useState(0);
 
-  const dietSummary = getDietSummary?.(selectedDate) || {
-    totalKcal: 0,
-    macros: [
-      { percent: 0, current: 0, goal: 0, color: '#F2C94C' },
-      { percent: 0, current: 0, goal: 0, color: '#F05636' },
-      { percent: 0, current: 0, goal: 0, color: '#2678E4' }
-    ],
-    meals: {}
+    return () => {
+      const time = new Date().getTime();
+      if (time - lastPress < delay) {
+        onDoublePress();
+      }
+      setLastPress(time);
+    };
   };
 
-  const medicationSummary = getMedicationSummary?.(selectedDate) || { 영양제: '', 의약물: '' };
-  const exerciseSummary = getExerciseSummary?.(selectedDate) || {
-    운동: { desc: '', percent: 0 },
-    '걸음 수': { desc: '', percent: 0 }
+  const [medications, setMedications] = useState([
+    { id: 1, name: '유산균', quantity: '2정', checked: true },
+    { id: 2, name: '마그네슘', quantity: '1정', checked: false },
+  ]);
+
+  const [alarms, setAlarms] = useState([
+    { id: 1, time: '07:00', enabled: true },
+    { id: 2, time: '07:00', enabled: false },
+  ]);
+
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+
+  const toggleCheck = (id: number) => {
+    setMedications(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
   };
 
-  const handleTodayPress = () => {
-    const today = new Date();
-    setSelectedDate(today);
-    setCurrentMonth(today);
+  const toggleAlarm = (id: number) => {
+    setAlarms(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, enabled: !item.enabled } : item
+      )
+    );
   };
 
-  const markedDates = {
-    ...(hasDiet?.() || {}),
-    ...(hasMedication?.() || {}),
-    ...(hasExercise?.() || {}),
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowPicker(Platform.OS === 'ios');
+    setDate(currentDate);
   };
+
+  // 네비게이션 핸들러 + 더블탭 핸들러
+  const goToDiet = () => navigation.navigate('식단');
+  const goToMedicine = () => navigation.navigate('복약');
+  const goToExercise = () => navigation.navigate('운동');
+  const goToSleep = () => navigation.navigate('수면');
+
+  const onDoublePressDiet = useDoublePress(goToDiet);
+  const onDoublePressMedicine = useDoublePress(goToMedicine);
+  const onDoublePressExercise = useDoublePress(goToExercise);
+  const onDoublePressSleep = useDoublePress(goToSleep);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.headerRow}>
-          <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
-          <TouchableOpacity onPress={() => navigation.navigate('NotificationCenter')}>
+    <ScrollView style={styles.container}>
+      {/* 상단 */}
+      <View style={styles.topBar}>
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+        <View style={styles.iconGroup}>
+          <TouchableOpacity>
+            <Image source={require('../../assets/images/icon_user.png')} style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity>
             <Image source={require('../../assets/images/icon_alarm.png')} style={styles.icon} />
           </TouchableOpacity>
         </View>
+      </View>
 
-        {isMonthView ? (
-          <MonthlyCalendar
-            currentMonth={currentMonth}
-            onPrevMonth={() => setCurrentMonth(prev => subMonths(prev, 1))}
-            onNextMonth={() => setCurrentMonth(prev => addMonths(prev, 1))}
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            markedDates={markedDates}
-          />
-        ) : (
-          <WeeklyCalendar
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            markedDates={markedDates}
-          />
-        )}
+      {/* 퀵 메뉴 */}
+      <View style={styles.quickMenu}>
+        <Text style={styles.quickMenuText}>퀵 메뉴 (상세페이지 아이콘)_추가 삭제 가능</Text>
+      </View>
 
-        <View style={styles.calendarControls}>
-          <TouchableOpacity onPress={() => setIsMonthView(prev => !prev)}>
-            <Text style={styles.expandText}>{isMonthView ? '▲' : '▼'}</Text>
+      {/* 날짜 */}
+      <View style={styles.summaryHeader}>
+        <Text style={styles.summaryTitle}>한눈에 확인하기</Text>
+        <TouchableOpacity onPress={() => setShowPicker(true)}>
+          <Text style={styles.summaryDate}>
+            {date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', weekday: 'short' })}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {showPicker && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={onChangeDate}
+        />
+      )}
+
+      {/* 식단 카드 */}
+      <TouchableOpacity activeOpacity={1} onPress={onDoublePressDiet}>
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>식단</Text>
+            <TouchableOpacity>
+              <Text style={styles.addText}>+</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.cardTime}>오전 10:00</Text>
+          <View style={styles.foodRow}>
+            <View>
+              <Text>햇반 210g</Text>
+              <Text style={styles.foodDetail}>1.5&nbsp;&nbsp;&nbsp;70&nbsp;&nbsp;&nbsp;5</Text>
+            </View>
+            <Text style={styles.kcal}>315</Text>
+          </View>
+          <View style={styles.foodRow}>
+            <View>
+              <Text>맛있닭 소프트 닭가슴살 200g</Text>
+              <Text style={styles.foodDetail}>4.4&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;44</Text>
+            </View>
+            <Text style={styles.kcal}>230</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      {/* 복약 카드 */}
+      <TouchableOpacity activeOpacity={1} onPress={onDoublePressMedicine}>
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>복약</Text>
+            <TouchableOpacity>
+              <Text style={styles.addText}>+</Text>
+            </TouchableOpacity>
+          </View>
+          {medications.map((item) => (
+            <View key={item.id} style={styles.medicineRow}>
+              <View>
+                <Text>{item.name}</Text>
+                <Text style={styles.medicineQty}>{item.quantity}</Text>
+              </View>
+              <TouchableOpacity onPress={() => toggleCheck(item.id)}>
+                <Image
+                  source={
+                    item.checked
+                      ? require('../../assets/images/checkbox_checked.png')
+                      : require('../../assets/images/checkbox_unchecked.png')
+                  }
+                  style={styles.checkbox}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      </TouchableOpacity>
+
+      {/* 운동 카드 */}
+      <TouchableOpacity activeOpacity={1} onPress={onDoublePressExercise}>
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>운동</Text>
+            <TouchableOpacity>
+              <Text style={styles.addText}>+</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.exerciseTitle}>운동 부위 <Text style={styles.exerciseArea}>가슴, 등</Text></Text>
+          <View style={styles.exerciseMetrics}>
+            <Text style={styles.exerciseText}>🔥 698kcal</Text>
+            <Text style={styles.exerciseText}>🏋️ 8개 운동</Text>
+            <Text style={styles.exerciseText}>⏱ 32세트</Text>
+          </View>
+          <TouchableOpacity style={styles.detailButton}>
+            <Text style={styles.detailButtonText}>자세히 보기</Text>
           </TouchableOpacity>
-          {!isToday(selectedDate) && (
-            <TouchableOpacity onPress={handleTodayPress}>
-              <Text style={styles.todayText}>오늘</Text>
-            </TouchableOpacity>
-          )}
         </View>
+      </TouchableOpacity>
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>나의 하루</Text>
-          </View>
-          <View style={styles.nutritionBox}>
-            <Text style={styles.totalKcal}>총 섭취량 {dietSummary.totalKcal} Kcal</Text>
-            <View style={styles.macroRow}>
-              {['탄수', '단백', '지방'].map((label, idx) => (
-                <View key={idx} style={styles.macroItem}>
-                  <View style={styles.macroTopRow}>
-                    <Text style={styles.macroLabel}>{label}</Text>
-                    <Text style={styles.macroPercent}>{dietSummary.macros[idx].percent}%</Text>
-                  </View>
-                  <View style={styles.progressBar}>
-                    <View style={[styles.progressInner, {
-                      flex: dietSummary.macros[idx].percent / 100,
-                      backgroundColor: dietSummary.macros[idx].color
-                    }]} />
-                  </View>
-                  <Text style={styles.macroGrams}>
-                    {dietSummary.macros[idx].current} / {dietSummary.macros[idx].goal}g
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>나의 식단</Text>
-            <TouchableOpacity style={styles.recordButton} onPress={() => navigation.navigate('Diet')}>
-              <Text style={styles.recordButtonText}>기록 하기</Text>
+      {/* 알람 카드 */}
+      <TouchableOpacity activeOpacity={1} onPress={onDoublePressSleep}>
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>기본 알람</Text>
+            <TouchableOpacity>
+              <Text style={styles.addText}>+</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.gridRow}>
-            {['아침', '점심', '저녁', '간식'].map((meal, idx) => (
-              <View key={idx} style={styles.gridCard}>
-                <Text style={styles.gridIcon}>🍴</Text>
-                <Text style={styles.gridMealTitle}>{meal}</Text>
-                <Text style={styles.gridMealContent}>{dietSummary.meals[meal] || '아직 안먹었어요'}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>나의 복약</Text>
-            <TouchableOpacity style={styles.recordButton} onPress={() => navigation.navigate('Medication')}>
-              <Text style={styles.recordButtonText}>기록 하기</Text>
-            </TouchableOpacity>
-          </View>
-          {['영양제', '의약물'].map((type, idx) => (
-            <View key={idx} style={styles.medicationCard}>
-              <Text style={styles.pillIcon}>💊</Text>
-              <Text style={styles.medicationTitle}>{type}</Text>
-              <Text style={styles.medicationDesc}>{medicationSummary[type] || '아직 계획되지 않았어요'}</Text>
+          {alarms.map((alarm) => (
+            <View key={alarm.id} style={styles.alarmRow}>
+              <Text>{alarm.time}</Text>
+              <TouchableOpacity onPress={() => toggleAlarm(alarm.id)}>
+                <Image
+                  source={
+                    alarm.enabled
+                      ? require('../../assets/images/switch_on.png')
+                      : require('../../assets/images/switch_off.png')
+                  }
+                  style={styles.switchImage}
+                />
+              </TouchableOpacity>
             </View>
           ))}
         </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>나의 운동</Text>
-            <TouchableOpacity style={styles.recordButton} onPress={() => navigation.navigate('Exercise')}>
-              <Text style={styles.recordButtonText}>기록 하기</Text>
-            </TouchableOpacity>
-          </View>
-          {['운동', '걸음 수'].map((type, idx) => (
-            <View key={idx} style={styles.exerciseCard}>
-              <Text style={styles.exerciseTitle}>{type}</Text>
-              <Text style={styles.exerciseDesc}>{exerciseSummary[type]?.desc || '0분 0 kcal 소모'}</Text>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressInner, {
-                  flex: (exerciseSummary[type]?.percent || 0) / 100,
-                  backgroundColor: '#F05636'
-                }]} />
-              </View>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#F0F3F6' },
-  container: { paddingBottom: 40, paddingHorizontal: 20 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 40 },
-  logo: { width: 64, height: 22, resizeMode: 'contain' },
-  icon: { width: 32, height: 32 },
-  calendarControls: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, marginBottom: 16 },
-  expandText: { fontSize: 18, color: '#F05636', fontWeight: 'bold' },
-  todayText: { fontSize: 16, color: '#2678E4', fontWeight: '600' },
-  section: { backgroundColor: '#fff', borderRadius: 16, padding: 20, marginTop: 24 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#000' },
-  recordButton: { backgroundColor: '#F05636', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  recordButtonText: { color: '#fff', fontWeight: '600' },
-  nutritionBox: { alignItems: 'center' },
-  totalKcal: { fontSize: 20, fontWeight: '700', color: '#000', marginBottom: 12 },
-  macroRow: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
-  macroItem: { flex: 1, alignItems: 'center', marginHorizontal: 4 },
-  macroTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
-  macroLabel: { fontSize: 14, color: '#000', marginRight: 4 },
-  macroPercent: { fontSize: 14, fontWeight: '700', color: '#F05636' },
-  progressBar: { height: 6, backgroundColor: '#eee', width: '100%', borderRadius: 4 },
-  progressInner: { height: '100%', borderRadius: 4 },
-  macroGrams: { fontSize: 12, color: '#333', marginTop: 4 },
-  gridRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  gridCard: { width: '48%', backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, alignItems: 'center', borderWidth: 1, borderColor: '#eee' },
-  gridIcon: { fontSize: 24, marginBottom: 8 },
-  gridMealTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  gridMealContent: { fontSize: 14, color: '#2678E4' },
-  medicationCard: { backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, borderWidth: 1, borderColor: '#eee' },
-  pillIcon: { fontSize: 24, marginBottom: 8 },
-  medicationTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  medicationDesc: { fontSize: 14, color: '#2678E4' },
-  exerciseCard: { backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12 },
-  exerciseTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  exerciseDesc: { fontSize: 14, color: '#333', marginBottom: 8 }
+  container: { flex: 1, backgroundColor: '#F1F4F9' },
+  topBar: {
+    marginTop: 60,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logo: { width: 48, height: 24, resizeMode: 'contain' },
+  iconGroup: { flexDirection: 'row', gap: 16 },
+  icon: { width: 24, height: 24, resizeMode: 'contain' },
+  quickMenu: {
+    marginTop: 24,
+    backgroundColor: '#ECEFF1',
+    marginHorizontal: 16,
+    borderRadius: 12,
+    padding: 12,
+  },
+  quickMenuText: {
+    color: '#999',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  summaryHeader: {
+    marginTop: 24,
+    marginHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#121212',
+  },
+  summaryDate: {
+    fontSize: 14,
+    color: '#2678E4',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 20,
+    marginTop: 16,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  addText: {
+    fontSize: 20,
+    color: '#F05636',
+    fontWeight: '600',
+  },
+  cardTime: {
+    fontSize: 12,
+    color: '#999',
+    marginBottom: 12,
+  },
+  foodRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  foodDetail: {
+    fontSize: 12,
+    color: '#2678E4',
+    marginTop: 4,
+  },
+  kcal: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#333',
+  },
+  medicineRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  medicineQty: {
+    fontSize: 13,
+    color: '#2678E4',
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  exerciseTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  exerciseArea: {
+    fontWeight: '400',
+    color: '#2678E4',
+  },
+  exerciseMetrics: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  exerciseText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  detailButton: {
+    backgroundColor: '#F05636',
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  detailButtonText: {
+    color: '#FFF',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  alarmRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  switchImage: {
+    width: 40,
+    height: 24,
+    resizeMode: 'contain',
+  },
 });

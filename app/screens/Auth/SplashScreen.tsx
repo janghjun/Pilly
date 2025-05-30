@@ -1,8 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useUserInfo } from '../../context/UserInfoContext';
 
 export default function SplashScreen({ navigation }: any) {
   React.useEffect(() => {

@@ -32,16 +32,14 @@ export default function SignupStep1({ navigation }) {
       <Text style={styles.stepIndicator}>{step}/2</Text>
       <Text style={styles.welcomeText}>환영합니다{'\n'}빠른 가입으로 시작해봐요</Text>
 
-      {step === 1 && (
-        <TextInput
-          style={styles.input}
-          placeholder="사용자 이메일을 입력해주세요"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          placeholderTextColor="#aaa"
-        />
-      )}
+      <TextInput
+        style={styles.input}
+        placeholder="사용자 이메일을 입력해주세요"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        placeholderTextColor="#aaa"
+      />
 
       {step === 2 && (
         <TextInput
@@ -93,19 +91,19 @@ const styles = StyleSheet.create({
   },
   input: {
     position: 'absolute',
-    top: 399,
+    top: 346,
     left: 51,
     width: 292,
     height: 55,
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
+    borderRadius:8,
     paddingHorizontal: 16,
     fontSize: 16,
     elevation: 2,
     textAlign: 'left',
   },
   passwordInput: {
-    top: 474,
+    top: 451, // step === 2 일 때 비밀번호 입력창 위치
   },
   nextButton: {
     position: 'absolute',
