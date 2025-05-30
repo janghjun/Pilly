@@ -24,6 +24,13 @@ export default function PasswordResetScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.step}>1/1</Text>
+
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.backBtn}>{'<'}</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.title}>비밀번호를 잊어버리셨나요?</Text>
       <Text style={styles.subtitle}>사용자 이메일로{"\n"}안내메일 발송 예정이에요~</Text>
 
@@ -50,7 +57,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F4F9',
     position: 'relative',
     alignItems: 'center',
+//     fontFamily: 'Roboto-SemiBold',
   },
+  headerRow: { position: 'absolute',
+                   top: 70,
+                   left: 30,
+                   fontSize: 20,
+                   color: '#6199F7',
+                   fontWeight: '600',
+  },
+  backBtn: { fontSize: 20, color: '#F05636', marginRight: 6 },
   step: {
     position: 'absolute',
     top: 70,
@@ -87,13 +103,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     elevation: 2,
     textAlign: 'left',
-    fontWeight: 'bold',
+//     fontWeight: 'bold',
 
   },
   button: {
     position: 'absolute',
-    top: 769,
-    left: 22,
+    bottom: 100,
+    left: 24,
     width: 348,
     height: 48,
     backgroundColor: '#2678E4',

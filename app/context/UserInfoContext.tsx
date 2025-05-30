@@ -1,32 +1,28 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type UserInfo = {
+interface UserInfo {
+  email: string;
   nickname: string;
   birth: string;
   gender: string;
-  height: string;
-  weight: string;
-  mainService: string;
-};
+}
 
-type UserInfoContextType = {
+interface UserInfoContextType {
   userInfo: UserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<UserInfo>>;
-};
+}
 
-const defaultUserInfo: UserInfo = {
-  nickname: '',
-  birth: '',
-  gender: '',
-  height: '',
-  weight: '',
-  mainService: '',
-};
+// 1. Context 생성
+const UserInfoContext = createContext<UserInfoContextType | null>(null);
 
-const UserInfoContext = createContext<UserInfoContextType | undefined>(undefined);
-
+// 2. Provider 정의
 export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
-  const [userInfo, setUserInfo] = useState<UserInfo>(defaultUserInfo);
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    email: '',
+    nickname: '',
+    birth: '',
+    gender: '',
+  });
 
   return (
     <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>
@@ -35,6 +31,7 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// 3. 커스텀 훅: context 접근용
 export const useUserInfo = () => {
   const context = useContext(UserInfoContext);
   if (!context) {

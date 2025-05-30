@@ -13,7 +13,7 @@ export default function OnboardingScreen({ navigation }) {
   const [weight, setWeight] = useState('');
   const [selectedService, setSelectedService] = useState('');
 
-  const services = ['수면 관리', '운동 관리', '식단 관리', '복약 관리'];
+  const services = ['수면 관리', '운동 관리', '식단 관리'];
 
   const handleNext = () => {
     if (step === 1 && nickname.trim()) {
@@ -95,7 +95,7 @@ export default function OnboardingScreen({ navigation }) {
               key={service}
               style={[
                 styles.option,
-                { top: 288 + index * 95 },
+                { top: 326 + index * 95 },
                 selectedService === service && styles.selectedOption,
               ]}
               onPress={() => setSelectedService(service)}

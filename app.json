@@ -14,7 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.PillyClean"
+      "bundleIdentifier": "com.anonymous.PillyClean",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "이 앱은 주변 시설 탐색을 위해 현재 위치 정보를 사용합니다."
+      }
     },
     "android": {
       "adaptiveIcon": {
